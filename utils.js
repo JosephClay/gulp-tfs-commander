@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = {
     err: function(message) {
         return 'gulp-tfs: ' + message;
