@@ -52,7 +52,7 @@ var gulpTfs = module.exports = function(opts) {
 	});
 };
 
-var setDefauls = function(opts) {
+var setDefaults = function(opts) {
 	_.extend(defaults, opts);
 	return gulpTfs;
 };
