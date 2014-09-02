@@ -1,84 +1,99 @@
-var through = require('through2');
-var gutil = require('gulp-util');
-var PluginError = gutil.PluginError;
-var fs = require('fs');
-var exec = require('child_process').exec;
+var _ = require('lodash'),
+	fs = require('fs'),
+	through = require('through2'),
+	gulpUtil = require('gulp-util'),
+	exec = require('child_process').exec,
 
-var PLUGIN_NAME = 'gulp-tfs';
+	throwError = function(message) {
+		throw new gulpUtil.PluginError('gulp-tfs', message);
+	},
 
-var gulpTfs = function (opts) {
-	opts = setDefaultOptions(opts);
-	return through.obj(function (file, enc, cb) {
-		var that = this;
-		checkForTFS(function (result) {
+	VALID_COMMANDS = ['edit', 'lock'],
+	PLATFORM_BLACKLIST = ['win32'],
 
-			if (result) {
-				if (!fs.existsSync(file.path)) {
-					throw new PluginError(PLUGIN_NAME, "File does not exist");
-				}
+	defaults = {
+		tfs: 'tf',
+		command: 'edit'
+	},
 
-				if (process.platform !== 'win32') {
-					throw new PluginError(PLUGIN_NAME, "This plugin can only be used on a Windows system with Visual Studio installed");
-				}
+	commandLine = function(tfs, command) {
+		return tfs + ' ' + command;
+	};
 
-				var command = 'tf ' + opts.command + ' "' + file.path + '"';
-				exec(command, function (err, stdout, stderr) {
-					"use strict";
-					processExecResults(err, stdout, stderr);
-					gutil.log('TF result: command ' + opts.command + " on file " + gutil.colors.cyan(stdout));
-					that.push(file);
-					cb();
-				});
+var gulpTfs = module.exports = function(opts) {
+	opts = setOptions(opts);
+
+	return through.obj(function(file, encoding, callback) {
+		var self = this;
+		checkForTFS(function(result) {
+
+			if (!result) {
+				gulpUtil.log('TF command is not found.');
+				self.push(file);
+				return callback();
 			}
-			else {
-				gutil.log('TF command is not found.');
-				that.push(file);
-				cb();
+
+			if (!fs.existsSync(file.path)) {
+				return throwError('File does not exist');
 			}
+
+			if (PLATFORM_BLACKLIST.indexOf(process.platform) !== -1) {
+				return throwError('This plugin can only be used on a Windows system with Visual Studio installed');
+			}
+
+			var command = commandLine(opts.tfs, opts.command + ' "' + file.path + '"');
+			return exec(command, function(err, stdout, stderr) {
+				processExecResults(err, stdout, stderr);
+				gulpUtil.log('TF result: command ' + opts.command + ' on file ' + gulpUtil.colors.cyan(stdout));
+				self.push(file);
+				callback();
+			});
 		});
 	});
 };
 
-var setDefaultOptions = function (opts) {
-	var validCommands = ['edit', 'lock'];
-	opts = opts || {};
-	opts.command = opts.command || 'edit';
-	if (validCommands.indexOf(opts.command) < 0) {
-		throw new PluginError(PLUGIN_NAME, "The only commands currently implemented are 'edit' and 'lock'");
+var setDefauls = function(opts) {
+	_.extend(defaults, opts);
+	return gulpTfs;
+};
+
+var setOptions = function(opts) {
+	opts = _.extend({}, defaults, opts);
+
+	if (VALID_COMMANDS.indexOf(opts.command) < 0) {
+		return throwError('The only commands currently implemented are: ' + VALID_COMMANDS.join(','));
 	}
+
 	return opts;
 };
 
-var processExecResults = function (err, stdout, stderr) {
-	var returnVal;
+var processExecResults = function(err, stdout, stderr) {
 	if (stderr) {
-		returnVal = stderr;
-		gutil.log('TF command error: ' + gutil.colors.cyan(stderr) + " -- " + gutil.colors.red(returnVal));
-	} else if (err) {
-		returnVal = err;
-		gutil.log('TF command caution: ' + gutil.colors.cyan(stdout) + " -- " + gutil.colors.yellow(returnVal));
+		gulpUtil.log('TF command error: ' + gulpUtil.colors.cyan(stderr) + ' -- ' + gulpUtil.colors.red(stderr));
+		return stderr;
 	}
-	else {
-		returnVal = stdout;
+
+	if (err) {
+		gulpUtil.log('TF command caution: ' + gulpUtil.colors.cyan(stdout) + ' -- ' + gulpUtil.colors.yellow(err));
+		return err;
 	}
-	return returnVal;
+
+	return stdout;
 };
 
-var checkForTFS = function (done) {
-	exec('tf bob', function (err, stdout, stderr) {
-		//not a tf command, but validates that tf throws the right error
-		//this ensures that the tf command is available
+var checkForTFS = function(opts, done) {
+	exec(commandLine(opts.tfs, 'bob'), function(err, stdout, stderr) {
+		// not a tf command, but validates that tf throws the right error
+		// this ensures that the tf command is available
 		if (stderr === 'Unrecognized command: bob.\r\n') {
-			done(true);
+			return done(true);
 		}
-		else {
-			throw new PluginError(PLUGIN_NAME, 'TF command is not available. Make sure Visual Studio is installed and its install directory is in your %PATH%');
-		}
+
+		return throwError('TF command is not available. Make sure Visual Studio is installed and its install directory is in your %PATH%');
 	});
 };
 
-module.exports = gulpTfs;
-module.exports.checkForTFS = checkForTFS;
-module.exports.processExecResults = processExecResults;
-module.exports.setDefaultOptions = setDefaultOptions;
+gulpTfs.checkForTFS = checkForTFS;
+gulpTfs.processExecResults = processExecResults;
+gulpTfs.config = setDefaults;
 
