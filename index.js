@@ -25,7 +25,7 @@ var gulpTfs = module.exports = function(opts) {
 
 	return through.obj(function(file, encoding, callback) {
 		var self = this;
-		checkForTFS(function(result) {
+		checkForTFS(opts, function(result) {
 
 			if (!result) {
 				gulpUtil.log('TF command is not found.');
