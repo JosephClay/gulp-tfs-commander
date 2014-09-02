@@ -82,7 +82,10 @@ var processExecResults = function(err, stdout, stderr) {
 };
 
 var checkForTFS = function(opts, done) {
-	exec(commandLine(opts.tfs, 'bob'), function(err, stdout, stderr) {
+	var command = commandLine(opts.tfs, 'bob');
+	console.log('command: ', command);
+	exec(command, function(err, stdout, stderr) {
+		console.log('stderr: ', stderr);
 		// not a tf command, but validates that tf throws the right error
 		// this ensures that the tf command is available
 		if (stderr === 'Unrecognized command: bob.\r\n') {
