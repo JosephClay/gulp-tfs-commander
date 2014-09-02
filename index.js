@@ -8,7 +8,8 @@ var _ = require('lodash'),
 
 	defaults = {
 		tfs: 'tf',
-		command: 'edit'
+		command: 'edit',
+		debug: false
 	};
 
 var gulpTfs = module.exports = function(opts) {
@@ -19,7 +20,7 @@ var gulpTfs = module.exports = function(opts) {
 		checkForTFS(opts, function(result) {
 
 			if (!result) {
-				gulpUtil.log('TFS command is not found.');
+				utils.log('TFS command is not found.');
 				self.push(file);
 				return callback();
 			}
@@ -30,8 +31,10 @@ var gulpTfs = module.exports = function(opts) {
 
 			var command = utils.generateCommand(opts.tfs, opts.command + ' "' + file.path + '" ' + utils.zipParams(opts.params));
 			return exec(command, function(err, stdout, stderr) {
-				processExecResults(err, stdout, stderr);
-				gulpUtil.log('TFS result: command ' + opts.command + ' on file ' + gulpUtil.colors.cyan(stdout));
+				if (opts.debug) {
+					processExecResults(err, stdout, stderr);
+					utils.log('TFS result: command ' + opts.command + ' on file ' + gulpUtil.colors.cyan(stdout));
+				}
 				self.push(file);
 				callback();
 			});
@@ -41,12 +44,12 @@ var gulpTfs = module.exports = function(opts) {
 
 var processExecResults = function(err, stdout, stderr) {
 	if (stderr) {
-		gulpUtil.log('TFS command error: ' + gulpUtil.colors.cyan(stderr) + ' -- ' + gulpUtil.colors.red(stderr));
+		utils.log('TFS command error: ' + gulpUtil.colors.cyan(stderr) + ' -- ' + gulpUtil.colors.red(stderr));
 		return stderr;
 	}
 
 	if (err) {
-		gulpUtil.log('TFS command caution: ' + gulpUtil.colors.cyan(stdout) + ' -- ' + gulpUtil.colors.yellow(err));
+		utils.log('TFS command caution: ' + gulpUtil.colors.cyan(stdout) + ' -- ' + gulpUtil.colors.yellow(err));
 		return err;
 	}
 

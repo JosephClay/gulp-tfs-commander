@@ -1,6 +1,17 @@
-var _ = require('lodash');
+var _ = require('lodash'),
+    gulpUtil = require('gulp-util'),
+
+    stripNewLines = function(str) {
+        str = str || '';
+
+        return str.replace(/\r?\n|\r/g, '');
+    };
 
 module.exports = {
+    log: function(message) {
+        gulpUtil.log(stripNewLines(message));
+    },
+
     err: function(message) {
         return 'gulp-tfs: ' + message;
     },
@@ -24,5 +35,11 @@ module.exports = {
         });
 
         return str;
+    },
+
+    stripNewLines: function(str) {
+        str = str || '';
+
+        return str.replace(/\r?\n|\r/g, '');
     }
 };
