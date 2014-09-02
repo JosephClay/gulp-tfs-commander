@@ -9,7 +9,7 @@ var _ = require('lodash'),
 	},
 
 	VALID_COMMANDS = ['edit', 'lock'],
-	PLATFORM_BLACKLIST = ['win32'],
+	// PLATFORM_BLACKLIST = ['win32'],
 
 	defaults = {
 		tfs: 'tf',
@@ -37,9 +37,9 @@ var gulpTfs = module.exports = function(opts) {
 				return throwError('File does not exist');
 			}
 
-			if (PLATFORM_BLACKLIST.indexOf(process.platform) !== -1) {
-				return throwError('This plugin can only be used on a Windows system with Visual Studio installed');
-			}
+			// if (PLATFORM_BLACKLIST.indexOf(process.platform) !== -1) {
+			// 	return throwError('This plugin can only be used on a Windows system with Visual Studio installed');
+			// }
 
 			var command = commandLine(opts.tfs, opts.command + ' "' + file.path + '"');
 			return exec(command, function(err, stdout, stderr) {
@@ -83,9 +83,7 @@ var processExecResults = function(err, stdout, stderr) {
 
 var checkForTFS = function(opts, done) {
 	var command = commandLine(opts.tfs, 'bob');
-	console.log('command: ', command);
 	exec(command, function(err, stdout, stderr) {
-		console.log('stderr: ', stderr);
 		// not a tf command, but validates that tf throws the right error
 		// this ensures that the tf command is available
 		if (stderr === 'Unrecognized command: bob.\r\n') {
