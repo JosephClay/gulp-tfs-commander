@@ -12,10 +12,6 @@ module.exports = {
         gulpUtil.log(stripNewLines(message));
     },
 
-    err: function(message) {
-        return 'gulp-tfs: ' + message;
-    },
-
     generateCommand: function(tfs, command) {
         return tfs + ' ' + command;
     },
