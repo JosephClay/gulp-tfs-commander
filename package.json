@@ -1,10 +1,10 @@
 {
-  "name": "gulp-tfs",
+  "name": "gulp-tfs-commander",
   "description": "TFS check-out and edit plugin for gulp",
   "version": "0.0.1",
-  "homepage": "https://github.com/heatmonkey/gulp-tfs",
-  "repository": "git://github.com/heatmonkey/gulp-tfs.git",
-  "author": "James O'Donnell (https://github.com/heatmonkey/)",
+  "homepage": "https://github.com/JosephClay/gulp-tfs-commander",
+  "repository": "https://github.com/JosephClay/gulp-tfs-commander.git",
+  "author": "Joseph Clay",
   "main": "./index.js",
   "keywords": [
     "gulpplugin",
