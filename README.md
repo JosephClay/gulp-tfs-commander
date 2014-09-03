@@ -1,12 +1,12 @@
 # gulp-tfs
 
-> Perform edit and lock on files access through gulp. This plugin assumes that you have Visual Studio installed and the path to your Common7/IDE folder in your PATH environment variable.
+> Perform tfs commands on files through gulp. Credit to [heatmonkey](https://github.com/heatmonkey/gulp-tfs) for the original plugin.
 
 ## Information
 
 <table>
 <tr> 
-<td>Package</td><td>gulp-tfs</td>
+<td>Package</td><td>gulp-tfs-commander</td>
 </tr>
 <tr>
 <td>Description</td>
@@ -36,34 +36,13 @@ $ npm install gulp-tfs --save
 
 ```js
 var gulp = require('gulp');
-var gulpTfs = require('gulp-tfs');
+var gulpTfs = require('gulp-tfs-commander');
 
-// Basic usage using bump for SEMVER bump
+gulp.task('foo', function () {
 
-gulp.task('version', function () {
-
-	var type = patch ? 'patch' : minor ? 'minor' : major ? 'major' : false;
-	if(!type){
-		throw new Error('You must specify a type: \'--patch\' for (0.0.x), \'--minor\' for (0.x.0), or \'--major\' for (x.0.0)');
-	}
-	var bump = require('gulp-bump');
-	var exec = require('child_process').exec;
-	exec('npm view {{project-name}} version', function (err, stdout, stderr) {
-		var version = stdout.replace(/\r?\n|\r/g,'');
-		return gulp.src(['./package.json'])
-			.pipe(gulpTfs())
-			.pipe(bump({ 'type': type, 'version': version }))
-			.pipe(bump({ 'type': type}))
-			.pipe(gulp.dest('./'));
-
-	});
-});
-
-//Options are Edit and Lock, Edit is default
-
-gulp.task('lockFile', function () {
-  gulp.src(['./package.json'])
-			.pipe(gulpTfs({ command: 'lock'}))
+	return gulp.src(['./package.json'])
+		.pipe(gulpTfs({ command: 'edit', params: { lock: 'none' } }))
+		.pipe(gulp.dest('./'));
 });
 
 
