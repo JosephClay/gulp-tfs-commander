@@ -22,8 +22,8 @@ var gulpTfs = module.exports = function(opts) {
 		var self = this;
 
 		if (!fs.existsSync(file.path)) {
-			console.log('file.path: ', file.path);
-			throw new PluginError(PLUGIN_NAME, 'File does not exist');
+			this.push(f);
+			return callback();
 		}
 
 		var command = utils.generateCommand(opts.tfs, opts.command + ' "' + file.path + '" ' + utils.zipParams(opts.params));
