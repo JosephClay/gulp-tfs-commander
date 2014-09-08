@@ -19,7 +19,7 @@ var gulpTfs = module.exports = function(opts) {
 	opts = _.extend({}, defaults, opts);
 
 	var hasUnlocked = false;
-	return through(function(file, encoding, callback) {
+	return through.obj(function(file, encoding, callback) {
 		var self = this;
 
 		if (!fs.existsSync(file.path)) {
@@ -49,7 +49,7 @@ var direct = function(opts, file) {
 	opts = _.extend({}, defaults, opts);
 
 	var hasUnlocked = false;
-	return through(function(f, encoding, callback) {
+	return through.obj(function(f, encoding, callback) {
 		var self = this;
 
 		if (!fs.existsSync(file)) {
