@@ -18,11 +18,17 @@ var _ = require('lodash'),
 var gulpTfs = module.exports = function(opts) {
 	opts = _.extend({}, defaults, opts);
 
-	return through.obj(function(file, encoding, callback) {
+	var hasUnlocked = false;
+	return through(function(file, encoding, callback) {
 		var self = this;
 
 		if (!fs.existsSync(file.path)) {
-			this.push(f);
+			this.push(file);
+			return callback();
+		}
+
+		if (hasUnlocked) {
+			this.push(file);
 			return callback();
 		}
 
@@ -32,6 +38,7 @@ var gulpTfs = module.exports = function(opts) {
 				processExecResults(err, stdout, stderr);
 				utils.log('TFS result: command ' + opts.command + ' on file ' + gulpUtil.colors.cyan(stdout));
 			}
+			hasUnlocked = true;
 			self.push(file);
 			callback();
 		});
@@ -41,10 +48,16 @@ var gulpTfs = module.exports = function(opts) {
 var direct = function(opts, file) {
 	opts = _.extend({}, defaults, opts);
 
-	return through.obj(function(f, encoding, callback) {
+	var hasUnlocked = false;
+	return through(function(f, encoding, callback) {
 		var self = this;
 
 		if (!fs.existsSync(file)) {
+			this.push(f);
+			return callback();
+		}
+
+		if (hasUnlocked) {
 			this.push(f);
 			return callback();
 		}
@@ -55,6 +68,7 @@ var direct = function(opts, file) {
 				processExecResults(err, stdout, stderr);
 				utils.log('TFS result: command ' + opts.command + ' on file ' + gulpUtil.colors.cyan(stdout));
 			}
+			hasUnlocked = true;
 			self.push(f);
 			callback();
 		});
