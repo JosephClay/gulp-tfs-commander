@@ -1,4 +1,4 @@
-# gulp-tfs
+# gulp-tfs-commander
 
 > Perform tfs commands on files through gulp. Credit to [heatmonkey](https://github.com/heatmonkey/gulp-tfs) for the original plugin.
 
@@ -29,7 +29,7 @@ If you need to mark your files as edited or locked in TFS when gulp does somethi
 #### Install
 
 ```bash
-$ npm install gulp-tfs --save
+$ npm install gulp-tfs-commander --save
 ```
 
 ## Example
