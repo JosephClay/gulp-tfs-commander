@@ -6,7 +6,6 @@ var _ = require('lodash'),
 	gulpUtil = require('gulp-util'),
 	PluginError = gulpUtil.PluginError,
 	exec = require('child_process').exec,
-
 	PLUGIN_NAME = 'gulp-tfs-commander',
 
 	defaults = {
@@ -14,7 +13,23 @@ var _ = require('lodash'),
 		command: 'edit',
 		debug: false
 	};
-
+var AddVSLocationToPath = function(){
+	var platformPathSeporator = process.platform === 'win32'?';':':';
+	var pathToAdd = '';
+	if(process.env.VS120COMNTOOLS){
+		pathToAdd += platformPathSeporator;
+		pathToAdd += path.resolve(process.env.VS120COMNTOOLS, '..\\IDE\\');
+	}
+	if(process.env.VS110COMNTOOLS){
+		pathToAdd += platformPathSeporator;
+		pathToAdd += path.resolve(process.env.VS110COMNTOOLS, '..\\IDE\\');
+	}
+	if(process.env.VS100COMNTOOLS){
+		pathToAdd += platformPathSeporator;
+		pathToAdd += path.resolve(process.env.VS100COMNTOOLS, '..\\IDE\\');
+	}
+	process.env['PATH'] += pathToAdd;
+}
 var gulpTfs = module.exports = function(opts) {
 	opts = _.extend({}, defaults, opts);
 
@@ -101,7 +116,7 @@ var checkForTFS = function(opts, done) {
 		throw new PluginError(PLUGIN_NAME, 'TF command is not available. Make sure Visual Studio is installed and its install directory is in your %PATH%');
 	});
 };
-
+AddVSLocationToPath();
 _.extend(gulpTfs, {
 	checkForTFS: checkForTFS,
 	direct: direct,
