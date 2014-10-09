@@ -1,4 +1,4 @@
-# gulp-tfs
+# gulp-tfs-commander
 
 > Perform tfs commands on files through gulp. Credit to [heatmonkey](https://github.com/heatmonkey/gulp-tfs) for the original plugin.
 
