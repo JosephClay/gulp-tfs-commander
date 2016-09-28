@@ -13,22 +13,13 @@ var _ = require('lodash'),
 		command: 'edit',
 		debug: false
 	};
-var AddVSLocationToPath = function(){
-	var platformPathSeporator = process.platform === 'win32'?';':':';
-	var pathToAdd = '';
-	if(process.env.VS120COMNTOOLS){
-		pathToAdd += platformPathSeporator;
-		pathToAdd += path.resolve(process.env.VS120COMNTOOLS, '..\\IDE\\');
-	}
-	if(process.env.VS110COMNTOOLS){
-		pathToAdd += platformPathSeporator;
-		pathToAdd += path.resolve(process.env.VS110COMNTOOLS, '..\\IDE\\');
-	}
-	if(process.env.VS100COMNTOOLS){
-		pathToAdd += platformPathSeporator;
-		pathToAdd += path.resolve(process.env.VS100COMNTOOLS, '..\\IDE\\');
-	}
-	process.env['PATH'] += pathToAdd;
+var AddVSLocationToPath = function () {
+    var platformPathSeporator = process.platform === 'win32' ? ';' : ':';
+    var pathToAdd = '';
+    var versionVSTools = "VS" + parseInt(process.env.VisualStudioVersion) + "0COMNTOOLS";
+    pathToAdd += platformPathSeporator;
+    pathToAdd += path.resolve(process.env[versionVSTools], '..\\IDE\\');
+    process.env['PATH'] += pathToAdd;
 }
 var gulpTfs = module.exports = function(opts) {
 	opts = _.extend({}, defaults, opts);
@@ -125,4 +116,3 @@ _.extend(gulpTfs, {
 		return gulpTfs;
 	}
 });
-
