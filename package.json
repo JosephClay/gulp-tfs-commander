@@ -1,7 +1,7 @@
 {
   "name": "gulp-tfs-commander",
   "description": "TFS check-out and edit plugin for gulp",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "homepage": "https://github.com/JosephClay/gulp-tfs-commander",
   "repository": "https://github.com/JosephClay/gulp-tfs-commander.git",
   "author": "Joseph Clay",
