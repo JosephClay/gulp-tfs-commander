@@ -26,7 +26,7 @@ var AddVSLocationToPath = function () {
     		versionVSTools = "VS" + parseInt(process.env.VisualStudioVersion) + "0COMNTOOLS";
 	}
     pathToAdd += platformPathSeporator;
-    pathToAdd += path.resolve(process.env[versionVSTools], '..\\IDE\\');
+    pathToAdd += path.resolve(versionVSTools, '..\\IDE\\');
     process.env['PATH'] += pathToAdd;
 }
 var gulpTfs = module.exports = function(opts) {
