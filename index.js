@@ -16,9 +16,17 @@ var _ = require('lodash'),
 var AddVSLocationToPath = function () {
     var platformPathSeporator = process.platform === 'win32' ? ';' : ':';
     var pathToAdd = '';
-    var versionVSTools = "VS" + parseInt(process.env.VisualStudioVersion) + "0COMNTOOLS";
+	var versionVSTools = '';
+	if (process.env.VisualStudioVersion === '15.0')
+	{
+		versionVSTools = process.env["VSAPPIDDIR"];
+	}
+	else
+	{
+    		versionVSTools = "VS" + parseInt(process.env.VisualStudioVersion) + "0COMNTOOLS";
+	}
     pathToAdd += platformPathSeporator;
-    pathToAdd += path.resolve(process.env[versionVSTools], '..\\IDE\\');
+    pathToAdd += path.resolve(versionVSTools, '..\\IDE\\');
     process.env['PATH'] += pathToAdd;
 }
 var gulpTfs = module.exports = function(opts) {
